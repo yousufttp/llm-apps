@@ -23,8 +23,8 @@ Local LangGraph incident-resolution agent with SQLite persistence, deterministic
 **Highlights:** agent state · evaluation · persistence · safe remediation · LangSmith tracing
 
 <p align="center">
-  <img src="./TIRA/Langsmith-evaluator1.png" width="48%" alt="TIRA LangSmith evaluator results" />
-  <img src="./TIRA/Langsmith-Trace.png" width="48%" alt="TIRA LangSmith trace" />
+  <img src="https://raw.githubusercontent.com/yousufttp/TIRA-LangGraph-Workflow/main/Langsmith-evaluator1.png" width="48%" alt="TIRA LangSmith evaluator results" />
+  <img src="https://raw.githubusercontent.com/yousufttp/TIRA-LangGraph-Workflow/main/Langsmith-Trace.png" width="48%" alt="TIRA LangSmith trace" />
 </p>
 
 ### [Laya Reopen Analyser](https://github.com/yousufttp/Laya-Reopen-Analyser)
@@ -34,7 +34,7 @@ Streamlit application that processes incident workbooks, uses a local Laya model
 **Highlights:** local model inference · batch processing · Excel workflow · Streamlit UI · downloadable results
 
 <p align="center">
-  <img src="./Laya-Reopen-Analyser/GUI.png" width="80%" alt="Laya Reopen Analyser interface" />
+  <img src="https://raw.githubusercontent.com/yousufttp/Laya-Reopen-Analyser/main/GUI.png" width="80%" alt="Laya Reopen Analyser interface" />
 </p>
 
 ### [GraphRAG Mini](https://github.com/yousufttp/llm-apps/tree/main/GraphRAG)
