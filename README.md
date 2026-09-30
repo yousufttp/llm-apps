@@ -4,11 +4,33 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab)
 ![Status](https://img.shields.io/badge/Status-Active%20Development-2ea44f)
 
-A collection of practical LLM, agent, NLP, and AI application projects built as a hands-on portfolio for future interviews.
+A curated collection of practical LLM agents, RAG systems, NLP applications, and AI engineering projects built as a hands-on portfolio for future interviews.
 
 The projects in this repository focus on useful AI systems—not just model calls. They explore classification, RAG, semantic search, multi-agent orchestration, human approval, evaluation, observability, and production-style application design.
 
-## Project showcase
+## 🚀 Run one now
+
+Clone the portfolio index and open any project in its own repository:
+
+```bash
+git clone https://github.com/yousufttp/llm-apps.git
+```
+
+For example, run the TIRA agent locally:
+
+```bash
+git clone https://github.com/yousufttp/TIRA-LangGraph-Workflow.git
+cd TIRA-LangGraph-Workflow
+python main.py
+```
+
+Each project has independent dependencies and setup instructions in its own README.
+
+## 📂 Browse projects
+
+### 🚀 Advanced AI Agents
+
+Production-structured systems with tools, state, approvals, persistence, and multi-step workflows.
 
 ### [CareAgent](https://github.com/yousufttp/CareAgent)
 
@@ -37,17 +59,29 @@ Streamlit application that processes incident workbooks, uses a local Laya model
   <img src="https://raw.githubusercontent.com/yousufttp/Laya-Reopen-Analyser/main/GUI.png" width="80%" alt="Laya Reopen Analyser interface" />
 </p>
 
+### 📚 RAG and Knowledge Systems
+
+Projects that ground AI responses in documents, graphs, and operational knowledge.
+
 ### [GraphRAG Mini](https://github.com/yousufttp/llm-apps/tree/main/GraphRAG)
 
 Learning implementation of Graph-based Retrieval-Augmented Generation. It extracts entities and relationships, builds a knowledge graph, detects communities, generates summaries, and supports local and global search.
 
 **Highlights:** entity extraction · NetworkX graph · community detection · local search · global search
 
+### 🧠 NLP and Classification
+
+Projects focused on text representation, classification, and intelligent incident analysis.
+
 ### [BERT Incident Classifier](https://github.com/yousufttp/BERT_Incident_classifier)
 
 Local incident-ticket classifier that uses a frozen BERT text encoder and scikit-learn logistic regression to predict support group and category, with confidence-based manual review.
 
 **Highlights:** BERT embeddings · supervised classification · Excel input · repeatable inference · confidence thresholds
+
+### 🧪 LLM Experiments and Foundations
+
+Smaller experiments and supporting projects used to explore models, prompts, and application patterns.
 
 ### [Incident AI](https://github.com/yousufttp/llm-apps/tree/main/incident-ai)
 
@@ -97,7 +131,8 @@ cd ai-portfolio
 For example:
 
 ```bash
-cd TIRA
+git clone https://github.com/yousufttp/TIRA-LangGraph-Workflow.git
+cd TIRA-LangGraph-Workflow
 python main.py
 ```
 
