@@ -10,13 +10,13 @@ The projects in this repository focus on useful AI systems—not just model call
 
 ## Project showcase
 
-### [CareAgent](./CareAgent)
+### [CareAgent](https://github.com/yousufttp/CareAgent)
 
 Production-structured telecom customer-care application with a FastAPI backend, LangGraph supervisor, specialist workers, CopilotKit frontend, Oracle persistence, approval workflows, and OpenTelemetry observability.
 
 **Highlights:** multi-agent workflows · policy-controlled tools · human approval · customer/operator workspaces · tracing
 
-### [TIRA — Telecom Incident Resolution Agent](./TIRA)
+### [TIRA — Telecom Incident Resolution Agent](https://github.com/yousufttp/TIRA-LangGraph-Workflow)
 
 Local LangGraph incident-resolution agent with SQLite persistence, deterministic remediation tools, human approval, idempotent operations, a golden dataset, and local/LangSmith evaluation.
 
@@ -27,7 +27,7 @@ Local LangGraph incident-resolution agent with SQLite persistence, deterministic
   <img src="./TIRA/Langsmith-Trace.png" width="48%" alt="TIRA LangSmith trace" />
 </p>
 
-### [Laya Reopen Analyser](./Laya-Reopen-Analyser)
+### [Laya Reopen Analyser](https://github.com/yousufttp/Laya-Reopen-Analyser)
 
 Streamlit application that processes incident workbooks, uses a local Laya model to determine whether a customer issue remains unresolved, and exports row-level verdicts with probabilities and error handling.
 
@@ -37,31 +37,31 @@ Streamlit application that processes incident workbooks, uses a local Laya model
   <img src="./Laya-Reopen-Analyser/GUI.png" width="80%" alt="Laya Reopen Analyser interface" />
 </p>
 
-### [GraphRAG Mini](./GraphRAG)
+### [GraphRAG Mini](https://github.com/yousufttp/llm-apps/tree/main/GraphRAG)
 
 Learning implementation of Graph-based Retrieval-Augmented Generation. It extracts entities and relationships, builds a knowledge graph, detects communities, generates summaries, and supports local and global search.
 
 **Highlights:** entity extraction · NetworkX graph · community detection · local search · global search
 
-### [BERT Incident Classifier](./BERT_Incident_classifier)
+### [BERT Incident Classifier](https://github.com/yousufttp/BERT_Incident_classifier)
 
 Local incident-ticket classifier that uses a frozen BERT text encoder and scikit-learn logistic regression to predict support group and category, with confidence-based manual review.
 
 **Highlights:** BERT embeddings · supervised classification · Excel input · repeatable inference · confidence thresholds
 
-### [Incident AI](./incident-ai)
+### [Incident AI](https://github.com/yousufttp/llm-apps/tree/main/incident-ai)
 
 Incident-focused AI experimentation project exploring automated understanding and resolution workflows.
 
-### [IT Playbook OKF Bundle](./it-playbook-okf-bundle)
+### [IT Playbook OKF Bundle](https://github.com/yousufttp/llm-apps/tree/main/it-playbook-okf-bundle)
 
 Structured IT operations and playbook resources for grounding incident-analysis and retrieval workflows.
 
-### [Gemini Experiments](./gemini)
+### [Gemini Experiments](https://github.com/yousufttp/llm-apps/tree/main/gemini)
 
 Experiments with Google Gemini capabilities and multimodal/model-assisted application patterns.
 
-### [First ML Project](./my-first-ml)
+### [First ML Project](https://github.com/yousufttp/my-first-ml)
 
 Early machine-learning project demonstrating the foundations behind the later NLP and LLM systems in this portfolio.
 

@@ -136,6 +136,13 @@ celerybeat.pid
 
 # Environments
 .env
+
+# Standalone project repositories are maintained and versioned separately.
+/BERT_Incident_classifier/
+/CareAgent/
+/Laya-Reopen-Analyser/
+/TIRA/
+/my-first-ml/
 .envrc
 .venv
 env/
