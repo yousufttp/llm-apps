@@ -136,6 +136,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env.*
+!.env.example
 
 # Standalone project repositories are maintained and versioned separately.
 /BERT_Incident_classifier/
@@ -214,3 +216,9 @@ marimo/_lsp/
 __marimo__/
 
 .env
+
+# Local application state and generated artifacts
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+.streamlit/secrets.toml

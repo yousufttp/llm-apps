@@ -1,6 +1,9 @@
-# Telora
+# Telora — Multi-Agent RAG Application
 
-A customer support chatbot powered by OpenAI's `gpt-4o-mini` model.
+An agentic retrieval-augmented generation (RAG) customer-support application
+powered by OpenAI's `gpt-4o-mini` model. Telora routes each question across
+specialized Router, Activation FAQ, and Other FAQ agents, grounding responses
+in a searchable telecom FAQ knowledge base.
 
 ## Setup
 

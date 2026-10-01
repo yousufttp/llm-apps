@@ -3,9 +3,13 @@ __pycache__/
 *.py[cod]
 .streamlit/secrets.toml
 .env
+!.env.example
 chat_checkpoints.sqlite
 chat_checkpoints.sqlite-shm
 chat_checkpoints.sqlite-wal
 faq_vectors.sqlite
 faq_vectors.sqlite-shm
 faq_vectors.sqlite-wal
+.pytest_cache/
+__pycache__/
+tests/__pycache__/

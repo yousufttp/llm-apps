@@ -63,6 +63,16 @@ Streamlit application that processes incident workbooks, uses a local Laya model
 
 Projects that ground AI responses in documents, graphs, and operational knowledge.
 
+### [Telora — Multi-Agent RAG Application](https://github.com/yousufttp/llm-apps/tree/main/agentic_rag_telora)
+
+Agentic telecom customer-support application that combines specialized Router,
+Activation FAQ, and Other FAQ agents with retrieval-augmented generation over a
+searchable FAQ knowledge base. It includes encrypted checkpoint state,
+content-hash-aware embedding caching, and a Streamlit interface.
+
+**Highlights:** multi-agent routing · RAG · FAQ retrieval · OpenAI embeddings ·
+SQLite checkpoint persistence · encrypted customer fields · Streamlit
+
 ### [GraphRAG Mini](https://github.com/yousufttp/llm-apps/tree/main/GraphRAG)
 
 Learning implementation of Graph-based Retrieval-Augmented Generation. It extracts entities and relationships, builds a knowledge graph, detects communities, generates summaries, and supports local and global search.
