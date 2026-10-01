@@ -49,6 +49,20 @@ Local LangGraph incident-resolution agent with SQLite persistence, deterministic
   <img src="https://raw.githubusercontent.com/yousufttp/TIRA-LangGraph-Workflow/main/Langsmith-Trace.png" width="48%" alt="TIRA LangSmith trace" />
 </p>
 
+### [Customer Lookup MCP Demo](./mcp-agent)
+
+Streamlit customer-lookup application where a LangGraph agent uses a local
+Streamable HTTP MCP server to retrieve synthetic customer records by mobile
+number. The demo includes tool-calling visibility, optional name validation,
+input validation, missing-customer handling, and automated tests.
+
+**Highlights:** Model Context Protocol · Streamable HTTP · LangGraph agents ·
+Streamlit UI · tool calling · validation · pytest
+
+<p align="center">
+  <img src="./mcp-agent/mcp-agent.png" width="80%" alt="Customer Lookup MCP Demo interface" />
+</p>
+
 ### [Laya Reopen Analyser](https://github.com/yousufttp/Laya-Reopen-Analyser)
 
 Streamlit application that processes incident workbooks, uses a local Laya model to determine whether a customer issue remains unresolved, and exports row-level verdicts with probabilities and error handling.
