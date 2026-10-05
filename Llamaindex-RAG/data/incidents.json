@@ -1,0 +1,82 @@
+[
+  {
+    "incident_id": "INC1001",
+    "category": "Activation",
+    "error_code": "ACT-500",
+    "description": "Customer activation failed due to pending order.",
+    "root_cause": "Existing pending order blocked activation.",
+    "resolution": "Clear pending order and retry activation."
+  },
+  {
+    "incident_id": "INC1002",
+    "category": "Activation",
+    "error_code": "ACT-401",
+    "description": "Activation failed due to invalid customer credentials.",
+    "root_cause": "Expired authentication token.",
+    "resolution": "Refresh token and retry activation."
+  },
+  {
+    "incident_id": "INC1003",
+    "category": "Switch",
+    "error_code": "SW-201",
+    "description": "Device switch failed during IMEI validation.",
+    "root_cause": "New device IMEI was incompatible.",
+    "resolution": "Validate compatible IMEI and retry switch."
+  },
+  {
+    "incident_id": "INC1004",
+    "category": "Pending Order",
+    "error_code": "ORD-409",
+    "description": "New order blocked by an existing pending order.",
+    "root_cause": "Conflicting open order.",
+    "resolution": "Resolve conflicting order before resubmission."
+  },
+  {
+    "incident_id": "INC1005",
+    "category": "CLNR",
+    "error_code": "CLNR-503",
+    "description": "Customer line reconnect failed.",
+    "root_cause": "Downstream provisioning service unavailable.",
+    "resolution": "Retry reconnect after provisioning service recovery."
+  },
+  {
+    "incident_id": "INC1006",
+    "category": "Activation",
+    "error_code": "ACT-503",
+    "description": "Activation timed out while contacting provisioning.",
+    "root_cause": "Provisioning API timeout.",
+    "resolution": "Check provisioning service health and retry."
+  },
+  {
+    "incident_id": "INC1007",
+    "category": "Switch",
+    "error_code": "SW-409",
+    "description": "Device switch blocked by another active transaction.",
+    "root_cause": "Concurrent device change request.",
+    "resolution": "Complete or cancel conflicting transaction."
+  },
+  {
+    "incident_id": "INC1008",
+    "category": "Billing",
+    "error_code": "BILL-400",
+    "description": "Promotion not reflected on customer bill.",
+    "root_cause": "Promotion eligibility rule mismatch.",
+    "resolution": "Correct promotion eligibility and reprocess."
+  },
+  {
+    "incident_id": "INC1009",
+    "category": "CLNR",
+    "error_code": "CLNR-404",
+    "description": "Reconnect request failed because line was not found.",
+    "root_cause": "Incorrect subscriber identifier.",
+    "resolution": "Verify subscriber identifier and retry."
+  },
+  {
+    "incident_id": "INC1010",
+    "category": "Activation",
+    "error_code": "ACT-409",
+    "description": "Activation rejected due to duplicate request.",
+    "root_cause": "Existing activation transaction.",
+    "resolution": "Check transaction status before resubmitting."
+  }
+]
