@@ -1,0 +1,22 @@
+[
+  {
+    "query": "customer tried to activate but it looks like another transaction is still hanging on the account",
+    "expected_incidents": ["INC1001", "INC1004"]
+  },
+  {
+    "query": "activation keeps spinning for a long time and eventually fails while talking to the backend",
+    "expected_incidents": ["INC1006"]
+  },
+  {
+    "query": "customer moved to a different phone but the device change is failing validation",
+    "expected_incidents": ["INC1003"]
+  },
+  {
+    "query": "we are unable to restore service on the disconnected line and the backend service appears to be down",
+    "expected_incidents": ["INC1005"]
+  },
+  {
+    "query": "customer says the discount they were promised doesn't appear on the monthly charges",
+    "expected_incidents": ["INC1008"]
+  }
+]
