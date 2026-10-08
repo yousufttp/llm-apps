@@ -1,15 +1,10 @@
-from src.loader import load_incidents
-from src.indexer import create_index
+from src.indexer import load_index
 from src.query_engine import create_query_engine
 
 
 def main():
-
-    documents = load_incidents()
-    print(f"Loaded {len(documents)} documents")
-
-    index = create_index(documents)
-    print("Vector index created successfully")
+    # Load already-persisted vectors from ChromaDB
+    index = load_index()
 
     query = input("\nDescribe the customer issue: ")
 
@@ -30,17 +25,14 @@ def main():
     print("\n--- Retrieved Evidence ---")
 
     for source_node in response.source_nodes:
-
         print(
             f"\nIncident: "
             f"{source_node.metadata['incident_id']}"
         )
-
         print(
             f"Category: "
             f"{source_node.metadata['category']}"
         )
-
         print(
             f"Score: {source_node.score:.4f}"
         )

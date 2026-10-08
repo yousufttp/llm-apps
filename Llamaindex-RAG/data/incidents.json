@@ -1,12 +1,19 @@
 [
-  {
-    "incident_id": "INC1001",
-    "category": "Activation",
-    "error_code": "ACT-500",
-    "description": "Customer activation failed due to pending order.",
-    "root_cause": "Existing pending order blocked activation.",
-    "resolution": "Clear pending order and retry activation."
-  },
+ {
+  "incident_id": "INC1001",
+  "category": "Activation",
+  "error_code": "ACT-500",
+  "description": "Customer activation failed due to pending order.",
+  "root_cause": "Existing pending order blocked activation.",
+  "resolution": "Clear pending order and retry activation.",
+  "keywords": [
+    "activation",
+    "pending order",
+    "open order",
+    "blocked activation",
+    "order in progress"
+  ]
+},
   {
     "incident_id": "INC1002",
     "category": "Activation",
@@ -24,13 +31,21 @@
     "resolution": "Validate compatible IMEI and retry switch."
   },
   {
-    "incident_id": "INC1004",
-    "category": "Pending Order",
-    "error_code": "ORD-409",
-    "description": "New order blocked by an existing pending order.",
-    "root_cause": "Conflicting open order.",
-    "resolution": "Resolve conflicting order before resubmission."
-  },
+  "incident_id": "INC1004",
+  "category": "Pending Order",
+  "error_code": "ORD-409",
+  "description": "New order blocked by an existing pending order.",
+  "root_cause": "Conflicting open order.",
+  "resolution": "Resolve conflicting order before resubmission.",
+  "keywords": [
+    "pending order",
+    "open order",
+    "conflicting order",
+    "active transaction",
+    "order in progress",
+    "blocked order"
+  ]
+},
   {
     "incident_id": "INC1005",
     "category": "CLNR",
@@ -78,5 +93,20 @@
     "description": "Activation rejected due to duplicate request.",
     "root_cause": "Existing activation transaction.",
     "resolution": "Check transaction status before resubmitting."
-  }
+  },
+  {
+  "incident_id": "INC1011",
+  "category": "Activation",
+  "error_code": "ACT-502",
+  "description": "Customer activation failed because the provisioning gateway returned a bad gateway error.",
+  "root_cause": "Provisioning gateway returned an upstream service error.",
+"resolution": "Check provisioning gateway health, restore the upstream service, and retry customer activation",
+  "keywords": [
+    "activation",
+    "bad gateway",
+    "provisioning gateway",
+    "upstream service",
+    "502"
+  ]
+}
 ]

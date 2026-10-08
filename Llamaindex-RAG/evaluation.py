@@ -1,15 +1,10 @@
 import json
 from pathlib import Path
 
-from llama_index.core.schema import QueryBundle
-
-from src.loader import load_incidents
-from src.indexer import create_index
-from src.reranker import create_reranker
+from src.indexer import load_index
 
 
-FINAL_TOP_K = 3
-CANDIDATE_TOP_K = 10
+TOP_K = 3
 
 
 def load_evaluation_dataset():
@@ -23,210 +18,144 @@ def load_evaluation_dataset():
         return json.load(file)
 
 
-def calculate_metrics(retrieved, expected):
-    retrieved_set = set(retrieved)
-
-    relevant_retrieved = expected.intersection(
-        retrieved_set
-    )
-
-    # Recall@K
-    recall = (
-        len(relevant_retrieved)
-        / len(expected)
-    )
-
-    # Hit Rate@K
-    hit = 1 if relevant_retrieved else 0
-
-    # Reciprocal Rank
-    reciprocal_rank = 0
-
-    for rank, incident_id in enumerate(
-        retrieved,
-        start=1,
-    ):
-        if incident_id in expected:
-            reciprocal_rank = 1 / rank
-            break
-
-    return recall, hit, reciprocal_rank
-
-
 def evaluate():
+    index = load_index()
 
-    documents = load_incidents()
-    index = create_index(documents)
-
-    # Baseline retriever
-    baseline_retriever = index.as_retriever(
-        similarity_top_k=FINAL_TOP_K
-    )
-
-    # Retrieve more candidates for reranking
-    candidate_retriever = index.as_retriever(
-        similarity_top_k=CANDIDATE_TOP_K
-    )
-
-    reranker = create_reranker(
-        top_n=FINAL_TOP_K
+    retriever = index.as_retriever(
+        similarity_top_k=TOP_K
     )
 
     test_cases = load_evaluation_dataset()
 
-    baseline_recall_total = 0
-    baseline_hit_total = 0
-    baseline_rr_total = 0
+    total_recall = 0
+    total_hits = 0
+    total_reciprocal_rank = 0
 
-    reranked_recall_total = 0
-    reranked_hit_total = 0
-    reranked_rr_total = 0
-
+    # --------------------------------
+    # Evaluate each query
+    # --------------------------------
     for test in test_cases:
-
         query = test["query"]
+
         expected = set(
             test["expected_incidents"]
         )
 
-        # -------------------------
-        # Baseline retrieval
-        # -------------------------
+        results = retriever.retrieve(query)
 
-        baseline_results = (
-            baseline_retriever.retrieve(query)
-        )
-
-        baseline_ids = [
+        retrieved = [
             result.metadata["incident_id"]
-            for result in baseline_results
+            for result in results
         ]
 
-        (
-            baseline_recall,
-            baseline_hit,
-            baseline_rr,
-        ) = calculate_metrics(
-            baseline_ids,
-            expected,
+        retrieved_set = set(retrieved)
+
+        relevant_retrieved = expected.intersection(
+            retrieved_set
         )
 
-        # -------------------------
-        # Candidate retrieval
-        # -------------------------
-
-        candidates = (
-            candidate_retriever.retrieve(query)
+        # ----------------------------
+        # Recall@K
+        # ----------------------------
+        recall = (
+            len(relevant_retrieved)
+            / len(expected)
         )
 
-        # -------------------------
-        # LLM reranking
-        # -------------------------
+        # ----------------------------
+        # Hit Rate@K
+        # ----------------------------
+        hit = 1 if relevant_retrieved else 0
 
-        query_bundle = QueryBundle(
-            query_str=query
-        )
+        # ----------------------------
+        # Reciprocal Rank
+        # ----------------------------
+        reciprocal_rank = 0
 
-        reranked_results = (
-            reranker.postprocess_nodes(
-                candidates,
-                query_bundle=query_bundle,
-            )
-        )
+        for rank, incident_id in enumerate(
+            retrieved,
+            start=1,
+        ):
+            if incident_id in expected:
+                reciprocal_rank = 1 / rank
+                break
 
-        reranked_ids = [
-            result.metadata["incident_id"]
-            for result in reranked_results
-        ]
+        total_recall += recall
+        total_hits += hit
+        total_reciprocal_rank += reciprocal_rank
 
-        (
-            reranked_recall,
-            reranked_hit,
-            reranked_rr,
-        ) = calculate_metrics(
-            reranked_ids,
-            expected,
-        )
-
-        # Add totals
-        baseline_recall_total += baseline_recall
-        baseline_hit_total += baseline_hit
-        baseline_rr_total += baseline_rr
-
-        reranked_recall_total += reranked_recall
-        reranked_hit_total += reranked_hit
-        reranked_rr_total += reranked_rr
-
-        # -------------------------
-        # Print test result
-        # -------------------------
-
+        # ----------------------------
+        # Print individual result
+        # ----------------------------
         print("\n--------------------------------")
+
         print(f"Query: {query}")
         print(f"Expected: {sorted(expected)}")
 
-        print("\nBaseline:")
-        print(baseline_ids)
+        print("\nRetrieved:")
+
+        for rank, result in enumerate(
+            results,
+            start=1,
+        ):
+            print(
+                f"{rank}. "
+                f"{result.metadata['incident_id']} "
+                f"score={result.score:.4f}"
+            )
+
         print(
-            f"Recall@{FINAL_TOP_K}: "
-            f"{baseline_recall:.2f}"
-        )
-        print(
-            f"RR: {baseline_rr:.2f}"
+            f"\nRecall@{TOP_K}: "
+            f"{recall:.2f}"
         )
 
-        print("\nReranked:")
-        print(reranked_ids)
         print(
-            f"Recall@{FINAL_TOP_K}: "
-            f"{reranked_recall:.2f}"
-        )
-        print(
-            f"RR: {reranked_rr:.2f}"
+            f"Hit@{TOP_K}: "
+            f"{hit}"
         )
 
-    # -------------------------
-    # Aggregate results
-    # -------------------------
+        print(
+            f"Reciprocal Rank: "
+            f"{reciprocal_rank:.2f}"
+        )
 
+    # --------------------------------
+    # Aggregate metrics
+    # --------------------------------
     number_of_tests = len(test_cases)
 
+    average_recall = (
+        total_recall
+        / number_of_tests
+    )
+
+    hit_rate = (
+        total_hits
+        / number_of_tests
+    )
+
+    mrr = (
+        total_reciprocal_rank
+        / number_of_tests
+    )
+
     print("\n================================")
-    print("BASELINE VS RERANKED")
+    print("RETRIEVAL EVALUATION")
     print("================================")
 
-    print("\nBaseline")
-
     print(
-        f"Recall@{FINAL_TOP_K}: "
-        f"{baseline_recall_total / number_of_tests:.2f}"
+        f"Average Recall@{TOP_K}: "
+        f"{average_recall:.2f}"
     )
 
     print(
-        f"Hit Rate@{FINAL_TOP_K}: "
-        f"{baseline_hit_total / number_of_tests:.2f}"
-    )
-
-    print(
-        f"MRR: "
-        f"{baseline_rr_total / number_of_tests:.2f}"
-    )
-
-    print("\nReranked")
-
-    print(
-        f"Recall@{FINAL_TOP_K}: "
-        f"{reranked_recall_total / number_of_tests:.2f}"
-    )
-
-    print(
-        f"Hit Rate@{FINAL_TOP_K}: "
-        f"{reranked_hit_total / number_of_tests:.2f}"
+        f"Hit Rate@{TOP_K}: "
+        f"{hit_rate:.2f}"
     )
 
     print(
         f"MRR: "
-        f"{reranked_rr_total / number_of_tests:.2f}"
+        f"{mrr:.2f}"
     )
 
 
