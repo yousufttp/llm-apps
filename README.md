@@ -93,6 +93,14 @@ Learning implementation of Graph-based Retrieval-Augmented Generation. It extrac
 
 **Highlights:** entity extraction · NetworkX graph · community detection · local search · global search
 
+### [Telecom Incident RAG Assistant](./Llamaindex-RAG)
+
+Local telecom incident assistant built with LlamaIndex, Ollama, and ChromaDB. It persists embeddings, retrieves similar historical incidents, generates grounded root-cause and resolution suggestions, and evaluates retrieval quality with a golden dataset.
+
+The project also includes idempotent incremental ingestion: new incidents are inserted, unchanged incidents are skipped, and modified incidents are re-embedded.
+
+**Highlights:** persistent vector search · Ollama embeddings and LLMs · ChromaDB · metadata filtering · incremental ingestion · Recall@K/Hit Rate/MRR evaluation
+
 ### 🧠 NLP and Classification
 
 Projects focused on text representation, classification, and intelligent incident analysis.
