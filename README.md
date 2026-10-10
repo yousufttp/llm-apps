@@ -95,9 +95,9 @@ Learning implementation of Graph-based Retrieval-Augmented Generation. It extrac
 
 ### [Telecom Incident RAG Assistant](./Llamaindex-RAG)
 
-Local telecom incident assistant built with LlamaIndex, Ollama, and ChromaDB. It persists embeddings, retrieves similar historical incidents, generates grounded root-cause and resolution suggestions, and evaluates retrieval quality with a golden dataset.
+Local terminal-based telecom incident assistant built with LlamaIndex, Ollama, and ChromaDB. It persists embeddings on disk, retrieves similar historical incidents, generates grounded root-cause and resolution suggestions, and exposes retrieved evidence for traceability.
 
-The project also includes idempotent incremental ingestion: new incidents are inserted, unchanged incidents are skipped, and modified incidents are re-embedded.
+The project includes repeatable incremental ingestion and a golden retrieval dataset: new incidents are inserted, unchanged incidents are skipped, and modified incidents are re-embedded and evaluated with Recall@K, Hit Rate, and MRR.
 
 **Highlights:** persistent vector search · Ollama embeddings and LLMs · ChromaDB · metadata filtering · incremental ingestion · Recall@K/Hit Rate/MRR evaluation
 
@@ -136,7 +136,7 @@ Early machine-learning project demonstrating the foundations behind the later NL
 | Area | Examples in this portfolio |
 | --- | --- |
 | LLM applications | Gemini experiments, CareAgent, TIRA |
-| RAG and search | GraphRAG Mini, IT playbook bundle |
+| RAG and search | Telecom Incident RAG Assistant, GraphRAG Mini, IT playbook bundle |
 | NLP and classification | BERT Incident Classifier, Laya Reopen Analyser |
 | Agents | LangGraph supervisors, specialist workers, remediation agents |
 | Reliability | Human approval, confidence thresholds, idempotency, readback verification |
