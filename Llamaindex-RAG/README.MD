@@ -8,6 +8,11 @@ This project was built to explore the complete RAG lifecycle:
 
 **Load → Chunk → Embed → Persist → Retrieve → Augment → Generate → Evaluate**
 
+The current implementation is a local, terminal-based assistant. It keeps the
+vector index on disk, supports repeatable incremental ingestion, and exposes
+the retrieved incident IDs, categories, and similarity scores alongside each
+answer for traceability.
+
 ---
 
 ## Architecture
@@ -84,6 +89,24 @@ This project was built to explore the complete RAG lifecycle:
 | Vector database | ChromaDB | Persists and searches vector embeddings |
 | Generative LLM | llama3.2 | Generates answers from retrieved evidence |
 | Evaluation | Python | Measures retrieval quality using a golden dataset |
+
+### Current query behavior
+
+`main.py` loads the existing ChromaDB index, asks for a customer issue, and
+optionally accepts an exact incident category filter. The query engine retrieves
+the top three matching incidents and sends only that retrieved context to the
+local `llama3.2` model. Answers are constrained to this format:
+
+```text
+Likely Root Cause:
+<root cause>
+
+Recommended Resolution:
+<resolution>
+```
+
+The application also prints the retrieved incident ID, category, and similarity
+score so the generated answer can be checked against its evidence.
 
 ---
 
@@ -648,7 +671,16 @@ A dedicated reranker or cross-encoder would be a better future experiment.
 pip install -r requirements.txt
 ```
 
-The project requires Ollama with:
+Install and start [Ollama](https://ollama.com), then pull the two models used by
+the pipeline:
+
+```bash
+ollama serve
+ollama pull nomic-embed-text
+ollama pull llama3.2
+```
+
+The project requires:
 
 ```text
 nomic-embed-text
@@ -664,6 +696,9 @@ python build_index.py
 ```
 
 This loads the source incidents, generates embeddings and persists them in ChromaDB.
+
+Run this once for a new or empty `chroma_db/` directory. The command refuses to
+insert into a non-empty collection, which prevents accidental duplicate vectors.
 
 ---
 
@@ -683,6 +718,11 @@ This displays the number of stored vectors and incident metadata.
 python ingest_incidents.py
 ```
 
+The initial index must already exist before synchronization. Each incident is
+identified by `incident_id` and compared using a SHA-256 hash of its indexed
+content. Removed source incidents are not automatically deleted; delete or
+rebuild the local index if removals must be reflected.
+
 The synchronization process can:
 
 ```text
@@ -698,6 +738,9 @@ UNCHANGED → SKIP
 ```bash
 python main.py
 ```
+
+When prompted, press Enter at the category prompt to search all incidents, or
+enter an exact category such as `Activation`.
 
 Example query:
 

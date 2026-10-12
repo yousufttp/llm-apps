@@ -222,3 +222,6 @@ __marimo__/
 *.sqlite-shm
 *.sqlite-wal
 .streamlit/secrets.toml
+
+# Local vector indexes
+Llamaindex-RAG/chroma_db/
