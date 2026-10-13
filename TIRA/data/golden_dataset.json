@@ -1,0 +1,42 @@
+[
+  {
+    "incident_id": "INC1001",
+    "description": "Customer upgraded to eSIM but activation failed",
+    "expected_first_route": "activation",
+    "expected_root_cause": "switch_provisioning_mismatch",
+    "expected_human_review": true,
+    "expected_resolved_after_approval": true
+  },
+  {
+    "incident_id": "INC1002",
+    "description": "Customer has a pending order before activation",
+    "expected_first_route": "pending_order",
+    "expected_root_cause": "pending_order",
+    "expected_human_review": true,
+    "expected_resolved_after_approval": false
+  },
+  {
+    "incident_id": "INC1003",
+    "description": "Pending order status check is failing",
+    "expected_first_route": "pending_order",
+    "expected_root_cause": "",
+    "expected_human_review": true,
+    "expected_resolved_after_approval": false
+  },
+  {
+    "incident_id": "INC1004",
+    "description": "Customer activation issue after upgrade",
+    "expected_first_route": "activation",
+    "expected_root_cause": "no_active_failure",
+    "expected_human_review": false,
+    "expected_resolved_after_approval": true
+  },
+  {
+    "incident_id": "INC1005",
+    "description": "Customer activation failed with CLNR limit error",
+    "expected_first_route": "activation",
+    "expected_root_cause": "clnr_limit_error",
+    "expected_human_review": true,
+    "expected_resolved_after_approval": true
+  }
+]

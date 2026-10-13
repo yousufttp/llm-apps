@@ -1,0 +1,36 @@
+tira/
+│
+├── main.py
+├── state.py
+├── graph.py
+│
+├── config.py
+│
+├── nodes/
+│   ├── router.py
+│   ├── pending_order.py
+│   ├── activation.py
+│   ├── switch.py
+│   ├── clnr.py
+│   ├── supervisor.py
+│   ├── human_review.py
+│   └── remediation.py
+│
+├── services/
+│   ├── order_service.py
+│   ├── activation_service.py
+│   ├── switch_service.py
+│   └── clnr_service.py
+│
+├── data/
+│   └── golden_dataset.json
+│
+├── evaluation/
+│   ├── evaluators.py
+│   └── run_evaluation.py
+│
+└── tests/
+    └── test_incident_flow.py
+
+TIRA
+= Telco Incident Resolution Agent

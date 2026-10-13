@@ -1,0 +1,28 @@
+[project]
+name = "bert-incident-classifier"
+version = "0.1.0"
+description = "Starter project for BERT-based incident classification with PyTorch, Transformers, and Excel data support."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "joblib>=1.6.0",
+    "openpyxl>=3.1.5",
+    "pandas>=3.0.6",
+    "scikit-learn>=1.9.1",
+    "torch>=2.14.0",
+    "transformers>=5.17.0",
+]
+
+[project.scripts]
+incident-classifier = "incident_classifier.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
+
+[tool.uv]
+package = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

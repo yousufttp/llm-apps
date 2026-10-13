@@ -7,7 +7,9 @@ from fastapi.responses import StreamingResponse
 from app.schemas import ChatRequest
 from app.routing.router import ModelRouter, MODEL_REGISTRY
 from app.services.resilience import stream_with_resilience
+from fastapi import Depends
 
+from app.security.auth import verify_api_key
 
 app = FastAPI(
     title="My LLM Gateway",
@@ -30,7 +32,10 @@ async def list_models():
     }
 
 
-@app.post("/v1/chat/completions")
+@app.post(
+    "/v1/chat/completions",
+    dependencies=[Depends(verify_api_key)]
+)
 async def chat(request: ChatRequest):
 
     # Validate primary model selection before streaming.

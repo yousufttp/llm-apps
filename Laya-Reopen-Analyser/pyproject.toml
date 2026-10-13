@@ -1,0 +1,13 @@
+﻿[project]
+name = "incident-reopen-classifier"
+version = "0.1.0"
+description = "Classify unresolved incident resolutions from Excel with Laya."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "laya[serve]>=0.3.10,<0.4",
+    "openpyxl>=3.1",
+    "pandas>=2.2",
+    "requests>=2.32",
+    "streamlit>=1.40",
+]
