@@ -8,7 +8,7 @@ class Message(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    model: str = "llama3.2"
+    model: str = "local"
     messages: list[Message] = Field(min_length=1)
 
 

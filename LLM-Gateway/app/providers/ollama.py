@@ -1,48 +1,78 @@
 import json
+from collections.abc import AsyncIterator
+from typing import Any
+
 import httpx
 
-OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
+from app.providers.base import BaseLLMProvider
 
 
-async def generate_chat_stream(model: str, messages: list[dict]):
+class OllamaProvider(BaseLLMProvider):
+    """
+    Ollama implementation of the common LLM provider interface.
+    """
 
-    payload = {
-        "model": model,
-        "messages": messages,
-        "stream": True
-    }
+    def __init__(
+        self,
+        base_url: str = "http://127.0.0.1:11434"
+    ):
+        self.base_url = base_url
 
-    async with httpx.AsyncClient(timeout=120.0) as client:
-        async with client.stream(
-            "POST",
-            OLLAMA_URL,
-            json=payload
-        ) as response:
+    async def stream_chat(
+        self,
+        model: str,
+        messages: list[dict[str, str]]
+    ) -> AsyncIterator[dict[str, Any]]:
+        """
+        Call Ollama and yield normalized streaming events.
+        """
 
-            response.raise_for_status()
+        payload = {
+            "model": model,
+            "messages": messages,
+            "stream": True
+        }
 
-            async for line in response.aiter_lines():
-                if not line:
-                    continue
+        async with httpx.AsyncClient(timeout=120.0) as client:
 
-                data = json.loads(line)
+            async with client.stream(
+                "POST",
+                f"{self.base_url}/api/chat",
+                json=payload
+            ) as response:
 
-                if data.get("error"):
-                    raise RuntimeError(data["error"])
+                response.raise_for_status()
 
-                content = data.get("message", {}).get("content", "")
+                async for line in response.aiter_lines():
 
-                if content:
-                    yield (
-                        f"data: {json.dumps({'content': content})}\n\n"
-                    )
+                    if not line:
+                        continue
 
-                if data.get("done"):
-                    usage = {
-                        "prompt_tokens": data.get("prompt_eval_count", 0),
-                        "completion_tokens": data.get("eval_count", 0)
-                    }
+                    data = json.loads(line)
 
-                    yield f"data: {json.dumps({'usage': usage})}\n\n"
-                    yield "data: [DONE]\n\n"
-                    break
+                    if data.get("error"):
+                        raise RuntimeError(
+                            "Ollama generation failed"
+                        )
+
+                    content = data.get(
+                        "message", {}
+                    ).get("content", "")
+
+                    if content:
+                        yield {
+                            "type": "content",
+                            "content": content
+                        }
+
+                    if data.get("done"):
+                        yield {
+                            "type": "usage",
+                            "prompt_tokens": data.get(
+                                "prompt_eval_count", 0
+                            ),
+                            "completion_tokens": data.get(
+                                "eval_count", 0
+                            )
+                        }
+                        break
