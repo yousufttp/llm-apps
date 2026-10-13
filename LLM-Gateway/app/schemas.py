@@ -9,7 +9,11 @@ class Message(BaseModel):
 
 class ChatRequest(BaseModel):
     model: str = "local"
+
     messages: list[Message] = Field(min_length=1)
+
+    # Cloud fallback must be explicitly approved
+    allow_cloud_fallback: bool = False
 
 
 class ChatResponse(BaseModel):

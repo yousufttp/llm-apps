@@ -1,40 +1,28 @@
 import json
 import logging
 
-import httpx
-from openai import APIError
-
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 
 from app.schemas import ChatRequest
 from app.routing.router import ModelRouter, MODEL_REGISTRY
+from app.services.resilience import stream_with_resilience
 
 
-# Initialize FastAPI
 app = FastAPI(
     title="My LLM Gateway",
-    version="0.4.0"
+    version="0.5.0"
 )
 
-# Initialize Model Router
 router = ModelRouter()
-
-# Initialize Logger
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
-
-# -----------------------------------
-# Health Check API
-# -----------------------------------
 @app.get("/health")
 async def health():
     return {"status": "ok"}
 
 
-# -----------------------------------
-# List Available Models
-# -----------------------------------
 @app.get("/v1/models")
 async def list_models():
     return {
@@ -42,17 +30,12 @@ async def list_models():
     }
 
 
-# -----------------------------------
-# Chat Completions API
-# -----------------------------------
 @app.post("/v1/chat/completions")
 async def chat(request: ChatRequest):
 
-    # Step 1: Resolve provider and model
+    # Validate primary model selection before streaming.
     try:
-        provider, actual_model = router.resolve(
-            request.model
-        )
+        router.resolve(request.model)
 
     except ValueError as exc:
         raise HTTPException(
@@ -66,19 +49,19 @@ async def chat(request: ChatRequest):
             detail=str(exc)
         ) from exc
 
-    # Step 2: Convert Pydantic messages to dictionaries
     messages = [
         message.model_dump()
         for message in request.messages
     ]
 
-    # Step 3: Stream response from the selected provider
     async def event_stream():
 
         try:
-            async for event in provider.stream_chat(
-                model=actual_model,
-                messages=messages
+            async for event in stream_with_resilience(
+                router=router,
+                model_alias=request.model,
+                messages=messages,
+                allow_cloud_fallback=request.allow_cloud_fallback
             ):
 
                 if event["type"] == "content":
@@ -97,31 +80,20 @@ async def chat(request: ChatRequest):
                 else:
                     continue
 
-                # Convert normalized event into SSE
                 yield f"data: {json.dumps(output)}\n\n"
 
-            # Signal successful stream completion
             yield "data: [DONE]\n\n"
 
-        except (
-            httpx.HTTPError,
-            APIError,
-            json.JSONDecodeError,
-            RuntimeError,
-            KeyError,
-            TypeError
-        ):
+        except Exception:
             logger.exception(
-                "LLM provider stream failed"
+                "Gateway request failed"
             )
 
-            # Return SSE error event
             yield (
                 "event: error\n"
-                'data: {"error": "Provider request failed"}\n\n'
+                'data: {"error":"LLM request failed"}\n\n'
             )
 
-    # Step 4: Return streaming HTTP response
     return StreamingResponse(
         event_stream(),
         media_type="text/event-stream",
