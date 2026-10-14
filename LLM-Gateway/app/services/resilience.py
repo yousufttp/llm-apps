@@ -106,6 +106,14 @@ async def stream_with_resilience(
                     )
 
                     emitted = True
+
+                    yield {
+                        "type": "route",
+                        "provider": type(provider).__name__,
+                        "model": actual_model,
+                        "fallback": alias != model_alias
+                    }
+
                     yield first_event
 
                     # Continue streaming normally.

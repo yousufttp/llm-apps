@@ -2,3 +2,8 @@
 .env
 __pycache__/
 *.pyc
+
+# Local database and WAL files
+data/*.db
+data/*.db-shm
+data/*.db-wal

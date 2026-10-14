@@ -24,11 +24,17 @@ cd LLM-Gateway
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+Copy-Item .env.example .env
+# Start Ollama and Redis separately before launching the API.
 uvicorn app.main:app --reload
 ```
 
-Then open `http://127.0.0.1:8000/docs`. See each project README for model,
-database, and environment requirements.
+Then open `http://127.0.0.1:8000/docs`. The gateway exposes authenticated
+streaming chat, Redis-backed rate limiting, optional OpenAI fallback, and
+SQLite usage tracking. See [its README](./LLM-Gateway/README.md) for the
+required `GATEWAY_API_KEY`, Redis setup, request format, and environment
+configuration. See each other project README for its model, database, and
+environment requirements.
 
 ## Browse projects
 
@@ -39,8 +45,9 @@ database, and environment requirements.
   OpenTelemetry.
 - [TIRA](./TIRA/README.md) — incident-resolution agent with SQLite persistence,
   deterministic remediation, human approval, and evaluation.
-- [LLM Gateway](./LLM-Gateway/README.md) — streaming FastAPI gateway with local
-  Ollama, OpenAI routing, retries, and explicit cloud fallback.
+- [LLM Gateway](./LLM-Gateway/README.md) — authenticated streaming FastAPI
+  gateway with local Ollama, OpenAI routing, retries, Redis rate limiting,
+  explicit cloud fallback, and SQLite usage tracking.
 - [Customer Lookup MCP Demo](./mcp-agent/README.md) — Streamlit customer lookup
   using a local Streamable HTTP MCP server and a LangGraph agent.
 
