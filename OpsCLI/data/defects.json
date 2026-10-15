@@ -1,0 +1,5 @@
+[
+  {"key":"TEL-101","summary":"eSIM activation ACT-401 error","status":"Open"},
+  {"key":"TEL-102","summary":"Pending order ORD-409 stuck","status":"In Progress"},
+  {"key":"TEL-103","summary":"Switch SW-201 failure","status":"Open"}
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "id": "INC1001",
+    "category": "Activation",
+    "status": "In Progress",
+    "description": "eSIM activation fails with ACT-401",
+    "assigned_to": "OpsTeam",
+    "notes": [
+      "Investigating activation failure"
+    ]
+  },
+  {
+    "id": "INC1002",
+    "category": "Pending Order",
+    "status": "In Progress",
+    "description": "Order stuck with ORD-409",
+    "assigned_to": "Alex",
+    "notes": []
+  },
+  {
+    "id": "INC1003",
+    "category": "Switch",
+    "status": "Open",
+    "description": "Switch fails with SW-201",
+    "assigned_to": "Unassigned",
+    "notes": []
+  },
+  {
+    "id": "INC1004",
+    "category": "Switch",
+    "description": "SIM switch failed",
+    "status": "Open",
+    "assigned_to": "Unassigned",
+    "notes": []
+  }
+]
