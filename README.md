@@ -1,7 +1,7 @@
 # LLM Apps
 
 ![Focus](https://img.shields.io/badge/focus-LLM%20applications-6f42c1)
-![Projects](https://img.shields.io/badge/projects-16-3776ab)
+![Projects](https://img.shields.io/badge/projects-17-3776ab)
 ![Status](https://img.shields.io/badge/status-active%20development-2ea44f)
 
 A hands-on portfolio of LLM agents, RAG systems, incident automation, NLP
@@ -52,6 +52,9 @@ environment requirements.
   using a local Streamable HTTP MCP server and a LangGraph agent.
 - [OpsCLI](./OpsCLI/README.md) — telecom operations CLI with JSON-backed
   incident and defect tools, an OpenAI agent, and an MCP comparison.
+- [News Research Agent](./news-research-agent/) — Google ADK multi-agent
+  workflow for sourced news research, fact checking, analysis, and report
+  writing with web search.
 
 ### RAG and knowledge systems
 
