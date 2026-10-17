@@ -110,6 +110,15 @@ without depending on another repository or branch:
 | Evaluation | Golden datasets, Recall@K, MRR, local and LangSmith evaluation |
 | Product engineering | FastAPI, Streamlit, Next.js, Oracle, SQLite, observability |
 
+## Install the code-review skill
+
+Install the reusable code-review skill with:
+
+```bash
+npx skills add https://github.com/yousufttp/llm-apps/tree/main/agent_skills/code-review
+# npm install
+```
+
 ## Repository conventions
 
 Each project keeps its own dependency manifest, tests, environment example, and
