@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Validation Eval"
+  short_description: "Design and run focused evaluations for agent behavior"
+  default_prompt: "Use $agent-validation-eval to validate this agent against realistic tasks and report evidence-backed results."
