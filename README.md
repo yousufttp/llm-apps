@@ -1,7 +1,7 @@
 # LLM Apps
 
 ![Focus](https://img.shields.io/badge/focus-LLM%20applications-6f42c1)
-![Projects](https://img.shields.io/badge/projects-17-3776ab)
+![Projects](https://img.shields.io/badge/projects-18-3776ab)
 ![Status](https://img.shields.io/badge/status-active%20development-2ea44f)
 
 A hands-on portfolio of LLM agents, RAG systems, incident automation, NLP
@@ -76,6 +76,11 @@ environment requirements.
 - [Incident AI](./incident-ai/) — incident-focused AI experiments and
   resolution workflows.
 
+### Evaluation and quality
+
+- [LLM as Judge](./llm-as-judge/README.md) - Phase I benchmark scaffolding for
+  human-anchored telecom incident segmentation and future judge alignment.
+
 ### Experiments and foundations
 
 - [Gemini experiments](./gemini/) — Gemini model and multimodal
@@ -107,7 +112,7 @@ without depending on another repository or branch:
 | Agents | LangGraph supervisors, specialist workers, MCP tools |
 | RAG and search | ChromaDB, GraphRAG, FAQ retrieval, runbook grounding |
 | Reliability | Approvals, retries, idempotency, readback verification |
-| Evaluation | Golden datasets, Recall@K, MRR, local and LangSmith evaluation |
+| Evaluation | Golden datasets, Recall@K, MRR, local and LangSmith evaluation, LLM-as-a-Judge benchmark design |
 | Product engineering | FastAPI, Streamlit, Next.js, Oracle, SQLite, observability |
 
 ## Install the code-review skill
