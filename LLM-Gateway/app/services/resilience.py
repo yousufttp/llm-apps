@@ -1,32 +1,34 @@
+
 import asyncio
 import logging
+
 from collections.abc import AsyncIterator
 from contextlib import aclosing
 from typing import Any
 
 import httpx
+
 from openai import APIConnectionError, APIStatusError
+from opentelemetry.trace import Status, StatusCode
 
 from app.routing.router import ModelRouter
+from app.observability.tracing import tracer
 
 
 logger = logging.getLogger(__name__)
 
 FIRST_EVENT_TIMEOUT = 30.0
 RETRY_DELAY = 1.0
-
-# One initial attempt + one retry
 MAX_PRIMARY_ATTEMPTS = 2
 
 
 def is_retryable(exc: Exception) -> bool:
-    """
-    Retry temporary infrastructure errors only.
-    """
+    """Determine whether the error is temporary."""
 
     if isinstance(exc, APIStatusError):
-        return exc.status_code in (408, 409, 429) or (
-            exc.status_code >= 500
+        return (
+            exc.status_code in (408, 409, 429)
+            or exc.status_code >= 500
         )
 
     if isinstance(exc, APIConnectionError):
@@ -52,13 +54,8 @@ async def stream_with_resilience(
     allow_cloud_fallback: bool = False
 ) -> AsyncIterator[dict[str, Any]]:
 
-    # Primary provider
-    candidates = [
-        (model_alias, MAX_PRIMARY_ATTEMPTS)
-    ]
+    candidates = [(model_alias, MAX_PRIMARY_ATTEMPTS)]
 
-    # Cloud fallback only for local models
-    # and only when explicitly permitted.
     if (
         model_alias in ("local", "local-small", "llama3.2")
         and allow_cloud_fallback
@@ -67,85 +64,107 @@ async def stream_with_resilience(
 
     last_error = None
 
+    with tracer.start_as_current_span("gateway.route") as span:
+        span.set_attribute("gateway.requested_model", model_alias)
+        span.set_attribute(
+            "gateway.cloud_fallback_allowed",
+            allow_cloud_fallback
+        )
+
     for alias, max_attempts in candidates:
 
         try:
             provider, actual_model = router.resolve(alias)
+
         except (ValueError, RuntimeError):
-            # An unavailable fallback should not hide the
-            # original provider failure.
             if last_error is not None:
                 raise last_error
             raise
 
         for attempt in range(1, max_attempts + 1):
+
             emitted = False
 
-            try:
-                logger.info(
-                    "LLM attempt: alias=%s provider=%s model=%s attempt=%s",
-                    alias,
-                    type(provider).__name__,
-                    actual_model,
-                    attempt
-                )
-                stream = provider.stream_chat(
-                    model=actual_model,
-                    messages=messages
-                )
+            with tracer.start_as_current_span(
+                "provider.attempt",
+                attributes={
+                    "gateway.provider": type(provider).__name__,
+                    "gateway.model": actual_model,
+                    "gateway.attempt": attempt,
+                    "gateway.fallback": alias != model_alias,
+                },
+            ) as span:
 
-                # Ensure provider resources are closed even
-                # if the first event fails or times out.
-                async with aclosing(stream):
-
-                    # Obtain the first event before yielding
-                    # anything to the client.
-                    first_event = await asyncio.wait_for(
-                        anext(stream),
-                        timeout=FIRST_EVENT_TIMEOUT
+                try:
+                    stream = provider.stream_chat(
+                        model=actual_model,
+                        messages=messages,
                     )
 
-                    emitted = True
+                    async with aclosing(stream):
 
-                    yield {
-                        "type": "route",
-                        "provider": type(provider).__name__,
-                        "model": actual_model,
-                        "fallback": alias != model_alias
-                    }
+                        first_event = await asyncio.wait_for(
+                            anext(stream),
+                            timeout=FIRST_EVENT_TIMEOUT,
+                        )
 
-                    yield first_event
+                        emitted = True
 
-                    # Continue streaming normally.
-                    async for event in stream:
-                        yield event
+                        span.add_event("first_event_received")
 
-                return
+                        yield {
+                            "type": "route",
+                            "provider": type(provider).__name__,
+                            "model": actual_model,
+                            "fallback": alias != model_alias,
+                        }
 
-            except Exception as exc:
-                last_error = exc
+                        yield first_event
 
-                # No retry or fallback after an event
-                # has been emitted to the client.
-                if emitted:
-                    raise
+                        async for event in stream:
+                            yield event
 
-                if not is_retryable(exc):
-                    raise
+                    span.set_status(Status(StatusCode.OK))
 
-                logger.warning(
-                    "Provider %s failed before streaming, "
-                    "attempt %s/%s: %s",
-                    alias,
-                    attempt,
-                    max_attempts,
-                    type(exc).__name__
-                )
+                    return
 
-                if attempt < max_attempts:
-                    await asyncio.sleep(
-                        RETRY_DELAY * (2 ** (attempt - 1))
+                except Exception as exc:
+
+                    last_error = exc
+
+                    span.record_exception(exc)
+                    span.set_status(
+                        Status(StatusCode.ERROR, type(exc).__name__)
                     )
+
+                    # Never retry after streaming began.
+                    if emitted:
+                        raise
+
+                    if not is_retryable(exc):
+                        raise
+
+                    logger.warning(
+                        "Provider %s failed, attempt %s/%s: %s",
+                        alias,
+                        attempt,
+                        max_attempts,
+                        type(exc).__name__,
+                    )
+
+            # Outside provider span, but inside retry policy.
+            if attempt < max_attempts:
+
+                delay = RETRY_DELAY * (2 ** (attempt - 1))
+
+                with tracer.start_as_current_span(
+                    "retry.backoff",
+                    attributes={
+                        "gateway.provider_alias": alias,
+                        "gateway.delay_seconds": delay,
+                    },
+                ):
+                    await asyncio.sleep(delay)
 
     if last_error is not None:
         raise last_error
