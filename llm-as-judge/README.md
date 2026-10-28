@@ -153,3 +153,24 @@ Validation checks schema and consistency, **not** semantic accuracy or actual hu
 ## Privacy and operational safety
 
 Use synthetic or anonymized incidents for development. Exclude customer personal information, account numbers, credentials, and production secrets. Incident descriptions are untrusted **data**, not instructions to the LLM. No automatic production action is part of this phase.
+
+
+## Phase II-A — Taxonomy Judge (implemented)
+
+The `judges/taxonomy_judge.py` module implements a Netflix-inspired **per-criterion Judge**. It runs a local Ollama model via the HTTP API with a fixed system prompt, the versioned taxonomy rubric, the incident description, and the candidate segmentation. The response is validated as JSON. **The Judge never sees the reference classification or human rationale.** The evaluator adds draft human labels afterward to measure agreement. A failed model call is recorded as ERROR, not PASS or FAIL.
+
+### Getting started (PowerShell)
+
+```powershell
+ollama pull llama3.2
+python -m src.validate --strict
+python -m unittest discover -s tests -v
+python -m judges.taxonomy_judge --id INC-002
+python -m judges.taxonomy_judge --all
+```
+
+`--all` writes `evaluation_phase2a.json`, containing decisions and observed label agreement. Ollama must be running locally; no API key is required. Real model accuracy has **not** been measured in this package. The draft synthetic labels are **not expert-validated ground truth**, so evaluation figures are engineering smoke-test metrics only. A schema-valid JSON response is not proof of correct judgment.
+
+### Next: Phase II-B
+
+Build a Meta-Judge that compares human and Judge rationales for examples where both said FAIL, then use these disagreements alongside label errors as the RART Reflector focus set. Do not automatically modify approved rubrics.
