@@ -174,3 +174,31 @@ python -m judges.taxonomy_judge --all
 ### Next: Phase II-B
 
 Build a Meta-Judge that compares human and Judge rationales for examples where both said FAIL, then use these disagreements alongside label errors as the RART Reflector focus set. Do not automatically modify approved rubrics.
+
+## Phase II-B — Meta-Judge (implemented)
+
+The **Meta-Judge** is an offline audit of *agreed-FAIL* explanations, not a replacement classifier. It compares an independent human rater's failure rationale with the taxonomy Judge's failure rationale, then checks if they identify the same material defect (paraphrases can agree). Human reference rationales are **only supplied after** Phase II-A Judge inference. Cases with opposite PASS/FAIL decisions are recorded as `LABEL_MISMATCH`, whereas PASS/PASS cases are not evaluated for failure-reason agreement.
+
+### Data flow
+
+```text
+Human benchmark (verdict + rationale) ─┐
+                                      ├─> label check ─> both FAIL? ─> Meta-Judge
+Phase II-A Judge (verdict + rationale) ─┘                         │
+                                   label mismatch ───────────────┤
+                                                                  v
+                                error focus set (for later Reflector)
+```
+
+Run the Phase II-A Judge first using a running Ollama instance:
+
+```powershell
+ollama pull llama3.2
+python -m judges.taxonomy_judge --all
+python -m judges.meta_judge --input evaluation_phase2a.json --output evaluation_phase2b.json
+python -m unittest discover -s tests -v
+```
+
+`evaluation_phase2b.json` contains individual reason comparisons, the **reasoning agreement** rate for eligible agreed-FAIL pairs, and a proposed `reflector_focus_set` containing label mismatches and wrong-reason cases. Meta-Judge model errors are tracked separately; they never count as agreement. If no agreed-FAIL cases exist, reasoning agreement is `null` rather than an invented percentage.
+
+**Controls and limitations:** These examples contain synthetic, *unreviewed* human reference labels; no real-world alignment results are claimed. The Meta-Judge's judgments are themselves model outputs, not ground truth. Before adopting its measurements, independently label a sample of rationale pairs with human experts and verify agreement with the Meta-Judge. Phase II-C will propose rubric revisions, but neither the Meta-Judge nor the Reflector should silently modify active rules. Never put raw customer identifiers or confidential data into an external model.
