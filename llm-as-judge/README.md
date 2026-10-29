@@ -202,3 +202,35 @@ python -m unittest discover -s tests -v
 `evaluation_phase2b.json` contains individual reason comparisons, the **reasoning agreement** rate for eligible agreed-FAIL pairs, and a proposed `reflector_focus_set` containing label mismatches and wrong-reason cases. Meta-Judge model errors are tracked separately; they never count as agreement. If no agreed-FAIL cases exist, reasoning agreement is `null` rather than an invented percentage.
 
 **Controls and limitations:** These examples contain synthetic, *unreviewed* human reference labels; no real-world alignment results are claimed. The Meta-Judge's judgments are themselves model outputs, not ground truth. Before adopting its measurements, independently label a sample of rationale pairs with human experts and verify agreement with the Meta-Judge. Phase II-C will propose rubric revisions, but neither the Meta-Judge nor the Reflector should silently modify active rules. Never put raw customer identifiers or confidential data into an external model.
+
+## Phase II-C — Reflector (implemented)
+
+This iteration adds `alignment/reflector.py`. It reads the Phase II-A Judge results and Phase II-B Meta-Judge focus set, then makes an **offline, training-only** call to an LLM to propose edits to the current taxonomy rubric. It includes correctly judged **anchor examples** to discourage regressions. Only incidents marked `split=train` are included in the Reflector prompt; validation/test cases are deliberately excluded.
+
+```text
+Judge results + human labels + Meta-Judge rationale audits
+                │
+        focus set (errors)  + training anchors (correct cases)
+                │
+        Reflector + current rubric v0.1
+                │
+      proposed changes + before/after diff
+                │
+   HOLD — separately retest on untouched validation cases
+                │
+      Human review/approval required for activation
+```
+
+### Run (PowerShell)
+
+```powershell
+ollama pull llama3.2
+python -m judges.taxonomy_judge --all
+python -m judges.meta_judge --input evaluation_phase2a.json
+python -m alignment.reflector --meta evaluation_phase2b.json --judgments evaluation_phase2a.json
+python -m unittest discover -s tests -v
+```
+
+The Reflector writes `proposals/taxonomy_proposal.json` and `proposals/taxonomy_proposal.diff`. Inspect both. It **does not overwrite** `rubrics/taxonomy.json` or activate the proposal. It refuses edits to undefined `da` and `switch` category definitions and protects essential safety rules from deletion. Additional unsupported changes must still be caught by domain-expert review and held-out evaluation.
+
+**Next: Phase II-D, full RART orchestrator.** Implement candidate-rubric re-evaluation, per-criterion pass-recall/fail-recall/reasoning-agreement, held-out validation, regression constraints, stop conditions, and explicit human approval/versioning. In this prototype the human labels are synthetic drafts and the test suite uses model stubs, so it has not established LLM accuracy or production readiness.
